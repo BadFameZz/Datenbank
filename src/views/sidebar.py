@@ -15,6 +15,11 @@ class Sidebar:
         self.page.clean()
         self.page.add(create_settings_view(self.page))
 
+    def open_data_view(self, e):
+        from src.views.data_view import create_data_view
+        self.page.clean()
+        self.page.add(create_data_view(self.page))
+
     def build_sidebar(self):
         # Branding-Werte immer frisch aus der Datenbank laden
         settings = get_settings()
@@ -45,8 +50,9 @@ class Sidebar:
                 logo,
                 title,
                 ft.Divider(color=self.theme["sidebar_divider"]),
+                ft.TextButton(text="Daten", on_click=self.open_data_view, style=ft.ButtonStyle(color=self.theme["text_secondary"])),
                 ft.TextButton(text="Übersicht", on_click=lambda e: print("Übersicht geklickt"), style=ft.ButtonStyle(color=self.theme["text_secondary"])),
-                ft.TextButton(text="Soldat hinzufügen", on_click=lambda e: print("Soldat hinzufügen"), style=ft.ButtonStyle(color=self.theme["text_secondary"])),
+                ft.TextButton(text="Soldat hinzufügen", on_click=self.open_add_soldier_view, style=ft.ButtonStyle(color=self.theme["text_secondary"])),
                 ft.TextButton(text="Einstellungen", on_click=self.open_settings_view, style=ft.ButtonStyle(color=self.theme["text_secondary"])),
                 ft.Divider(color=self.theme["sidebar_divider"]),
                 ft.Row(
@@ -74,3 +80,8 @@ class Sidebar:
 
     def get(self):
         return self.content
+
+    def open_add_soldier_view(self, e):
+        from src.views.add_soldier_view import create_add_soldier_view
+        self.page.clean()
+        self.page.add(create_add_soldier_view(self.page))

@@ -114,6 +114,11 @@ def create_settings_view(page: ft.Page):
 
     # Grid-Layout für die Cards
     grid = ft.GridView(
+        controls=[
+            branding_card,
+            placeholder_card("Benutzerverwaltung"),
+            placeholder_card("Sicherheit"),
+        ],
         expand=True,
         runs_count=2,
         max_extent=600,
@@ -121,11 +126,6 @@ def create_settings_view(page: ft.Page):
         spacing=24,
         run_spacing=24,
         padding=ft.padding.symmetric(horizontal=32),
-        children=[
-            branding_card,
-            placeholder_card("Benutzerverwaltung"),
-            placeholder_card("Sicherheit"),
-        ]
     )
 
     content = ft.Container(
