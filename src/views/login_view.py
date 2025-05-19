@@ -21,7 +21,7 @@ class LoginView(ft.Container):
             height=100,
         )
         self.app_title = ft.Text(
-            "Datenbank1",
+            "Datenbank",
             size=25,
             weight=ft.FontWeight.BOLD,
             color=theme["text"]
@@ -84,7 +84,7 @@ class LoginView(ft.Container):
             content=ft.Column(
                 [
                     ft.Container(
-                        bgcolor=ft.Colors.BLUE_ACCENT_700,
+                        bgcolor=theme["header"],
                         expand=1,
                         content=ft.Column([
                             self.app_logo_top,

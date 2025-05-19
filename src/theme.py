@@ -8,7 +8,8 @@ DARK = {
     "sidebar_divider": "#444444",
     "button": "#0078d4",
     "button_text": "#ffffff",
-    "back_button": ""
+    "back_button": "#ff6058",
+    "header": "#0078d4",
 }
 LIGHT = {
     "bg": "#ededec",
@@ -18,6 +19,8 @@ LIGHT = {
     "sidebar_divider": "#222222",  # heller für mehr Kontrast im Light Mode
     "button": "#0078d4",
     "button_text": "#ffffff",
+    "back_button": "#ff6058",
+    "header": "#0078d4",
 }
 
 def get_theme(mode):

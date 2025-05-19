@@ -59,3 +59,32 @@ def authenticate_user(username, password):
     finally:
         if conn:
             conn.close()
+
+def get_settings():
+    conn = sqlite3.connect(DB_NAME)
+    c = conn.cursor()
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS settings (
+            key TEXT PRIMARY KEY,
+            value TEXT
+        )
+    """)
+    conn.commit()
+    c.execute("SELECT key, value FROM settings")
+    result = dict(c.fetchall())
+    conn.close()
+    return result
+
+def save_settings(settings: dict):
+    conn = sqlite3.connect(DB_NAME)
+    c = conn.cursor()
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS settings (
+            key TEXT PRIMARY KEY,
+            value TEXT
+        )
+    """)
+    for key, value in settings.items():
+        c.execute("REPLACE INTO settings (key, value) VALUES (?, ?)", (key, value))
+    conn.commit()
+    conn.close()

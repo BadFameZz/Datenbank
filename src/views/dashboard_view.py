@@ -42,14 +42,14 @@ def create_dashboard_view(page: ft.Page):
 
     header = ft.Container(
         height=60,
-        bgcolor=ft.Colors.BLUE_ACCENT_700,
+        bgcolor=theme["header"],
         padding=ft.padding.symmetric(horizontal=20),
         content=ft.Row([
             menu_btn,
             ft.Text("Dashboard", size=24, weight=ft.FontWeight.BOLD, color="#ffffff", expand=True),
             ft.ElevatedButton(
                 text="Logout",
-                bgcolor=ft.Colors.BLUE_ACCENT_700,
+                bgcolor=theme["back_button"],
                 color="#ffffff",
                 on_click=logout,
                 style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=8), elevation=2),

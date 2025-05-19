@@ -1,5 +1,6 @@
 import flet as ft
 from src.theme import get_theme
+from src.db import get_settings
 
 class Sidebar:
     def __init__(self, page, theme, on_toggle, collapsed):
@@ -9,48 +10,16 @@ class Sidebar:
         self.collapsed = collapsed
         self.build_sidebar()
 
-    def open_settings(self, e):
-        def save_settings(ev):
-            # Werte speichern (hier nur als Beispiel, persistente Speicherung kann ergänzt werden)
-            self.page.session.set("sidebar_logo", logo_field.value)
-            self.page.session.set("sidebar_title", title_field.value)
-            self.page.clean()
-            self.page.add(self.page.current_view())
-
-        logo_field = ft.TextField(
-            label="Pfad zum neuen Wappen (Logo)",
-            value=self.page.session.get("sidebar_logo") or "/Users/badfamezz/code/datenbank/assets/logos/wappen.png",
-            width=300
-        )
-        title_field = ft.TextField(
-            label="Sidebar-Titel",
-            value=self.page.session.get("sidebar_title") or "Datenbank",
-            width=300
-        )
-        dialog = ft.AlertDialog(
-            title=ft.Text("Einstellungen Sidebar"),
-            content=ft.Column([
-                logo_field,
-                title_field
-            ], spacing=10),
-            actions=[
-                ft.TextButton("Speichern", on_click=save_settings),
-                ft.TextButton("Abbrechen", on_click=lambda ev: self.page.dialog.close())
-            ],
-            actions_alignment=ft.MainAxisAlignment.END
-        )
-        self.page.dialog = dialog
-        dialog.open = True
-        self.page.update()
-
     def open_settings_view(self, e):
         from src.views.settings_view import create_settings_view
         self.page.clean()
         self.page.add(create_settings_view(self.page))
 
     def build_sidebar(self):
-        logo_path = self.page.session.get("sidebar_logo") or "/Users/badfamezz/code/datenbank/assets/logos/wappen.png"
-        sidebar_title = self.page.session.get("sidebar_title") or "Datenbank"
+        # Branding-Werte immer frisch aus der Datenbank laden
+        settings = get_settings()
+        logo_path = settings.get("sidebar_logo") or "/Users/badfamezz/code/datenbank/assets/logos/wappen.png"
+        sidebar_title = settings.get("sidebar_title") or "Datenbank"
         logo = ft.Container(
             content=ft.Image(
                 src=logo_path,
