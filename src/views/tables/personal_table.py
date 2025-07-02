@@ -1,5 +1,17 @@
 import flet as ft
 
+def make_edit_callback(soldat, open_popup):
+    def callback(e):
+        print(f"Bearbeiten geklickt: {soldat['personalnummer']}")
+        open_popup(soldat)
+    return callback
+
+def make_delete_callback(soldat, delete_soldier):
+    def callback(e):
+        print(f"Löschen geklickt: {soldat['personalnummer']}")
+        delete_soldier(soldat)
+    return callback
+
 def build_personal_table(soldiers_sorted, theme, page, open_popup, delete_soldier):
     table_rows = [
         ft.DataRow(cells=[
@@ -15,19 +27,26 @@ def build_personal_table(soldiers_sorted, theme, page, open_popup, delete_soldie
             ft.DataCell(
                 ft.Row(
                     [
-                        ft.IconButton(
-                            icon=ft.Icons.EDIT,
+                        ft.TextButton(
+                            content=ft.Row([
+                                ft.Icon(ft.Icons.EDIT, size=18),
+                                ft.Text("Bearbeiten")
+                            ], spacing=4),
                             tooltip="Bearbeiten",
-                            on_click=lambda e, soldat=s: open_popup(soldat)
+                            on_click=make_edit_callback(s, open_popup),
+                            style=ft.ButtonStyle(padding=ft.padding.symmetric(horizontal=8, vertical=2)),
                         ),
-                        ft.IconButton(
-                            icon=ft.Icons.DELETE,
+                        ft.TextButton(
+                            content=ft.Row([
+                                ft.Icon(ft.Icons.DELETE, size=18, color=ft.Colors.RED_500),
+                                ft.Text("Löschen", color=ft.Colors.RED_500)
+                            ], spacing=4),
                             tooltip="Löschen",
-                            on_click=lambda e, soldat=s: delete_soldier(soldat),
-                            icon_color=ft.Colors.RED_500,
+                            on_click=make_delete_callback(s, delete_soldier),
+                            style=ft.ButtonStyle(padding=ft.padding.symmetric(horizontal=8, vertical=2)),
                         ),
                     ],
-                    spacing=0
+                    spacing=4
                 )
             ),
         ]) for idx, s in enumerate(soldiers_sorted)

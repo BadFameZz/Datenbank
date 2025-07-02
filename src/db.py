@@ -177,3 +177,33 @@ def delete_soldier(personalnummer):
     finally:
         if conn:
             conn.close()
+
+def update_soldier(personalnummer, updated_fields: dict):
+    """
+    Aktualisiert die Daten eines Soldaten anhand der Personalnummer.
+
+    Args:
+        personalnummer (str): Die Personalnummer des zu aktualisierenden Soldaten
+        updated_fields (dict): Die zu aktualisierenden Felder und deren neue Werte
+
+    Returns:
+        bool: True wenn erfolgreich aktualisiert, False wenn ein Fehler aufgetreten ist
+    """
+    conn = None
+    try:
+        conn = sqlite3.connect(DB_NAME)
+        c = conn.cursor()
+        # Dynamisch das SQL-Statement bauen
+        set_clause = ", ".join([f"{key}=?" for key in updated_fields.keys()])
+        values = list(updated_fields.values())
+        values.append(personalnummer)
+        sql = f"UPDATE soldiers SET {set_clause} WHERE personalnummer = ?"
+        c.execute(sql, values)
+        conn.commit()
+        return True
+    except sqlite3.Error as e:
+        print(f"Datenbankfehler beim Aktualisieren des Soldaten: {e}")
+        return False
+    finally:
+        if conn:
+            conn.close()
