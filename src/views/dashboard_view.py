@@ -3,6 +3,7 @@ from src.theme import get_theme
 from src.views.sidebar import Sidebar
 
 def create_dashboard_view(page: ft.Page):
+    page.current_view = create_dashboard_view
     def get_mode():
         return "dark" if page.theme_mode == ft.ThemeMode.DARK else "light"
 
@@ -77,7 +78,7 @@ def create_dashboard_view(page: ft.Page):
         sidebar,
         ft.Column([
             header,
-            main_content,
+            main_content
         ], expand=True)
     ], spacing=0, expand=True)
 

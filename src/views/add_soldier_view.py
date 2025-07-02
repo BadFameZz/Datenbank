@@ -1,8 +1,10 @@
 import flet as ft
 from src.theme import get_theme
 from src.views.sidebar import Sidebar
+from src.db import insert_soldier
 
 def create_add_soldier_view(page: ft.Page):
+    page.current_view = create_add_soldier_view
     theme = get_theme("dark" if page.theme_mode == ft.ThemeMode.DARK else "light")
 
     # Mannschaftsdienstgrade (identisch für alle TSK)
@@ -107,11 +109,34 @@ def create_add_soldier_view(page: ft.Page):
             page.snack_bar.open = True
             page.update()
             return
-        # Hier könnte die Speicherung in die DB erfolgen
-        page.snack_bar = ft.SnackBar(ft.Text("Soldat gespeichert!", color=ft.Colors.GREEN))
+        # Soldat speichern
+        try:
+            insert_soldier({
+                "personalnummer": personalnummer_field.value,
+                "dienstgrad": dienstgrad_dropdown.value,
+                "name": name_field.value,
+                "vorname": vorname_field.value,
+                "personenkennziffer": personenkennziffer_field.value,
+                "geburtsdatum": geburtsdatum_field.value,
+                "geburtsort": geburtsort_field.value,
+                "telefonnummer": telefonnummer_field.value,
+                "marine": is_marine.value
+            })
+            page.snack_bar = ft.SnackBar(ft.Text("Soldat gespeichert!", color=ft.Colors.GREEN))
+            # Optional: Felder leeren
+            dienstgrad_dropdown.value = None
+            name_field.value = ""
+            vorname_field.value = ""
+            personalnummer_field.value = ""
+            personenkennziffer_field.value = ""
+            geburtsdatum_field.value = ""
+            geburtsort_field.value = ""
+            telefonnummer_field.value = ""
+            is_marine.value = False
+        except Exception as ex:
+            page.snack_bar = ft.SnackBar(ft.Text(f"Fehler beim Speichern: {ex}", color=ft.Colors.RED))
         page.snack_bar.open = True
         page.update()
-        # Optional: Felder leeren oder zurück zur Übersicht
 
     def go_back(e):
         from src.views.dashboard_view import create_dashboard_view

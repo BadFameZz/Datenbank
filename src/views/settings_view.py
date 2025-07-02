@@ -5,6 +5,7 @@ import sqlite3
 from src.db import get_settings, save_settings
 
 def create_settings_view(page: ft.Page):
+    page.current_view = create_settings_view
     theme = get_theme("dark" if page.theme_mode == ft.ThemeMode.DARK else "light")
 
     # Werte aus Datenbank laden

@@ -21,6 +21,22 @@ def init_db():
         """)
         conn.commit() # Commit table creation
 
+        # Soldaten-Tabelle anlegen (Personalnummer als Primärschlüssel)
+        c.execute('''
+            CREATE TABLE IF NOT EXISTS soldiers (
+                personalnummer TEXT PRIMARY KEY,
+                dienstgrad TEXT NOT NULL,
+                name TEXT NOT NULL,
+                vorname TEXT NOT NULL,
+                personenkennziffer TEXT,
+                geburtsdatum TEXT,
+                geburtsort TEXT,
+                telefonnummer TEXT,
+                marine INTEGER DEFAULT 0
+            )
+        ''')
+        conn.commit()
+
         # Attempt to create the admin user (only if it doesn't exist)
         try:
             c.execute("INSERT INTO users (username, password_hash) VALUES (?, ?)",
@@ -88,3 +104,76 @@ def save_settings(settings: dict):
         c.execute("REPLACE INTO settings (key, value) VALUES (?, ?)", (key, value))
     conn.commit()
     conn.close()
+
+def insert_soldier(soldier: dict):
+    conn = sqlite3.connect(DB_NAME)
+    c = conn.cursor()
+    c.execute('''
+        INSERT INTO soldiers (
+            personalnummer, dienstgrad, name, vorname, personenkennziffer, geburtsdatum, geburtsort, telefonnummer, marine
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ''', (
+        soldier["personalnummer"],
+        soldier["dienstgrad"],
+        soldier["name"],
+        soldier["vorname"],
+        soldier.get("personenkennziffer", None),
+        soldier.get("geburtsdatum", None),
+        soldier.get("geburtsort", None),
+        soldier.get("telefonnummer", None),
+        1 if soldier.get("marine") else 0
+    ))
+    conn.commit()
+    conn.close()
+
+def get_all_soldiers():
+    conn = None
+    try:
+        conn = sqlite3.connect(DB_NAME)
+        c = conn.cursor()
+        c.execute("SELECT personalnummer, dienstgrad, name, vorname, personenkennziffer, geburtsdatum, geburtsort, telefonnummer, marine FROM soldiers")
+        rows = c.fetchall()
+        return [
+            {
+                "personalnummer": row[0],
+                "dienstgrad": row[1],
+                "name": row[2],
+                "vorname": row[3],
+                "personenkennziffer": row[4],
+                "geburtsdatum": row[5],
+                "geburtsort": row[6],
+                "telefonnummer": row[7],
+                "marine": bool(row[8])
+            }
+            for row in rows
+        ]
+    except sqlite3.Error as e:
+        print(f"Datenbankfehler beim Laden der Soldaten: {e}")
+        return []
+    finally:
+        if conn:
+            conn.close()
+
+def delete_soldier(personalnummer):
+    """
+    Löscht einen Soldaten aus der Datenbank.
+
+    Args:
+        personalnummer (str): Die Personalnummer des zu löschenden Soldaten
+
+    Returns:
+        bool: True wenn erfolgreich gelöscht, False wenn ein Fehler aufgetreten ist
+    """
+    conn = None
+    try:
+        conn = sqlite3.connect(DB_NAME)
+        c = conn.cursor()
+        c.execute('DELETE FROM soldiers WHERE personalnummer = ?', (personalnummer,))
+        conn.commit()
+        return True
+    except sqlite3.Error as e:
+        print(f"Datenbankfehler beim Löschen des Soldaten: {e}")
+        return False
+    finally:
+        if conn:
+            conn.close()
