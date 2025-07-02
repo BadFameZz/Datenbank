@@ -11,9 +11,11 @@ def main(page: ft.Page):
     # Flet Page Grundeinstellungen
     page.title = "Datenbank Anwendung"
     page.theme_mode = ft.ThemeMode.DARK
+    # Start im Vollbild und automatisch an die Bildschirmauflösung anpassen
     page.window.full_screen = True
     page.window.visible = True
     page.padding = 0
+    page.on_resize = lambda e: page.update()
 
     def get_mode():
         return "dark" if page.theme_mode == ft.ThemeMode.DARK else "light"
@@ -48,4 +50,4 @@ def main(page: ft.Page):
 print("Initialisiere Datenbank...")
 init_db()
 print("Datenbank initialisierung abgeschlossen.")
-ft.app(target=main)
+ft.app(target=main, view=ft.AppView.FLET_APP)
